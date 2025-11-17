@@ -16,7 +16,7 @@ private:
     string employeeID;
     string shiftTimings;
 
-    vector<Book> books; // Librarian quản lý danh sách sách
+    vector<Book> books; // Librarian quản lý danh sách sách 1-1..* với sách
 
     int findBookIndexByID(const string& bookID) const 
     {
@@ -30,25 +30,53 @@ private:
 
 public:
     Librarian()
-        : librarianID(""), employeeID(""), shiftTimings("") {}
+        : librarianID(""), employeeID(""), shiftTimings(""), User() {} // Gọi default ---Tvien them User()
 
     Librarian(const string& librarianID, const string& employeeID, const string& shiftTimings)
-        : librarianID(librarianID), employeeID(employeeID), shiftTimings(shiftTimings) {}
+        : librarianID(librarianID), employeeID(employeeID), shiftTimings(shiftTimings), User() {} // Default User ---- Tuvien them User()
 
     Librarian(const string& email, const string& password)
-        : User("", "", email, "", password), // gọi constructor User cha
+        : User("", "", email, "", password), // gọi constructor User với defaults
           librarianID(""), employeeID(""), shiftTimings("") {}
 
+    //Destructor
+    ~Librarian() override = default;
 
     // ======== GET INFO (override) ========
     string getInfo() override {
-        return "LibrarianID: " + librarianID +
-               ", EmployeeID: " + employeeID +
-               ", Shift: " + shiftTimings;
+        stringstream ss;
+        ss << "LibrarianID: " << librarianID << ", EmployeeID: " << employeeID << ", Shift: " << shiftTimings;
+        return ss.str();// Tvien có sửa phần này
     }
 
     void registerMember() override {
         cout << "Librarian does not register members using this function.\n";
+    }
+
+    bool login(const string& email, const string& password) override {
+        return this->email == email && this->password == password;
+    }
+
+    void logout() override {
+        cout << "[INFO] Librarian logged out.\n";
+    }
+
+    bool changePassword(const string& oldPassword, const string& newPassword) override {
+        if (this->password == oldPassword) {
+            this->password = newPassword;
+            return true;
+        }
+        return false;
+    }
+    bool searchBook(const string& keyword) override {
+        for (const auto& book : books) {
+            if (book.getTitle().find(keyword) != string::npos ||
+                book.getAuthor().find(keyword) != string::npos ||
+                book.getCategory().find(keyword) != string::npos) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // =============================
@@ -58,12 +86,12 @@ public:
     bool addBook()
     {
         string id, title, author, publisher, category, isbn;
-        int year;
+        int year, stock = 0;//----Them stock = 0;
 
         cout << "Add new book - enter details\n";
         cout << "bookID: "; getline(cin, id);
 
-        if (id.empty()) {
+        if (id.empty() ]) {
             cout << "bookID cannot be empty.\n";
             return false;
         }
@@ -77,7 +105,7 @@ public:
         cout << "publisher: "; getline(cin, publisher);
         cout << "publicationYear: ";
 
-        while (!(cin >> year)) {
+        while (!(cin >> year) || year < 0) { //----Thêm || year < 0
             cout << "Invalid input. Enter integer year: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -86,8 +114,9 @@ public:
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "category: "; getline(cin, category);
         cout << "ISBN: "; getline(cin, isbn);
+        cout << "stock (default 0): "; // Tvien thêm 1 đoạn này nha
 
-        books.emplace_back(id, title, author, publisher, year, category, isbn);
+        books.emplace_back(id, title, author, publisher, year, category, isbn, stock);
         cout << "Book added.\n";
         return true;
     }
@@ -140,7 +169,7 @@ public:
         if (!s.empty()) b.setPublisher(s);
 
         cout << "New publicationYear (0 = keep): ";
-        if (cin >> yr && yr != 0) b.setPublicationYear(yr);
+        if (cin >> yr && yr != 0 && yr >= 0) b.setPublicationYear(yr);//-----Vien thêm && yr >= 0
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         cout << "New category (blank = keep): ";
@@ -151,6 +180,12 @@ public:
         getline(cin, s);
         if (!s.empty()) b.setISBN(s);
 
+        //------------Thêm đoạn này
+        cout << "New stock (-1 = keep): ";
+        if (cin >> yr && yr != -1 && yr >= 0) b.setStock(yr);
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        //----------Thêm đoạn này
+        
         cout << "Book updated.\n";
         return true;
     }
@@ -216,30 +251,6 @@ public:
 
         cout << "==========================\n";
     }
-    bool login(const string& email, const string& password) override 
-    {
-        return this->email == email && this->password == password;
-    }
-
-    void logout() override 
-    {
-        cout << "[INFO] Librarian logged out.\n";
-    }
-
-    bool changePassword(const string& oldPassword, const string& newPassword) override 
-    {
-        if (password == oldPassword) 
-        {
-            password = newPassword;
-            return true;
-        }
-        return false;
-    }
-
-    bool searchBook(const string& keyword) override 
-    {
-        // giả lập luôn true
-        return true;
-    }
 
 };
+
