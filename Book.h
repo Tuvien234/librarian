@@ -17,17 +17,20 @@ private:
 
 public:
     // Default constructor
-    Book()
-    {
-        bookID = "";
-        title = "";
-        author = "";
-        publisher = "";
-        publicationYear = 0;
-        category = "";
-        ISBN = "";
-        stock = 0;
-    }
+    book() : publicationYear(0), stock(0) {} // -------Tvien Them
+
+    //--------Bo Phan Nay
+    // Book()
+    // {
+    //     bookID = "";
+    //     title = "";
+    //     author = "";
+    //     publisher = "";
+    //     publicationYear = 0;
+    //     category = "";
+    //     ISBN = "";
+    //     stock = 0;
+    // }--------Bo phan nay
 
     // Full constructor
     Book(const string& bookID,
@@ -38,16 +41,20 @@ public:
          const string& category,
          const string& ISBN,
          int stock = 0)  // cho phép đặt stock luôn
-    {
-        this->bookID = bookID;
-        this->title = title;
-        this->author = author;
-        this->publisher = publisher;
-        this->publicationYear = publicationYear;
-        this->category = category;
-        this->ISBN = ISBN;
-        this->stock = stock;
-    }
+        : bookID(bookID), title(title), author(author), publisher(publisher),
+          publicationYear(publicationYear), category(category),
+          ISBN(ISBN), stock(stock) {} //-------Tvien them phan nay
+
+    // {-------Bo phan nay
+    //     this->bookID = bookID;
+    //     this->title = title;
+    //     this->author = author;
+    //     this->publisher = publisher;
+    //     this->publicationYear = publicationYear;
+    //     this->category = category;
+    //     this->ISBN = ISBN;
+    //     this->stock = stock;
+    // }-------Bo phan nay
 
     // Getters
     string getBookID() const { return bookID; }
@@ -68,7 +75,7 @@ public:
     void setISBN(const string& isbn) { ISBN = isbn; }
     void setStock(int s) { stock = s; }
 
-    // Return full book info
+    // Return full book info(UML yêu cầu)
     string getBookInfo() const
     {
         stringstream ss;
